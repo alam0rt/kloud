@@ -14,6 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+variable "hcloud_token" {
+  default = ""
+  description = "token to auth to hetzner cloud"
+}
+
 variable "cluster_name" {
   description = "prefix for cloud resources"
 }

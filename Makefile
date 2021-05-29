@@ -1,6 +1,8 @@
 cluster=banshee
 
-all: plan
+.PHONY: all init plan apply
+
+all: create
 
 init:
 	cd terraform && \
@@ -8,12 +10,17 @@ init:
  
 plan: init
 	cd terraform && \
-	terraform plan -var-file=tfvars/$(cluster).tfvars -out ../$(cluster).out
+	terraform plan -var="hcloud_token=${HCLOUD_TOKEN}" -var-file=tfvars/$(cluster).tfvars -out $(cluster).out
 
-apply: plan
+apply: $(cluster).out
+
+$(cluster).out: plan
 	cd terraform && \
-	terraform apply ../$(cluster).out
+	terraform apply $(cluster).out
 
-output: apply
+$(cluster).json: $(cluster).out
 	cd terraform && \
 	terraform output -json > ../$(cluster).json
+
+create: $(cluster).json
+	kubeone apply --manifest cluster/$(cluster).yaml -t $(cluster).json	

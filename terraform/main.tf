@@ -14,6 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+provider "hcloud" {
+  token = var.hcloud_token
+}
+
 resource "hcloud_ssh_key" "kubeone" {
   name       = "kubeone-${var.cluster_name}"
   public_key = file(var.ssh_public_key_file)
