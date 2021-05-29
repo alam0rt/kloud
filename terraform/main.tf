@@ -38,7 +38,7 @@ resource "hcloud_server_network" "control_plane" {
 }
 
 resource "hcloud_server" "control_plane" {
-  count       = 3
+  count       = var.control_plane_replicas
   name        = "${var.cluster_name}-control-plane-${count.index + 1}"
   server_type = var.control_plane_type
   image       = var.image
@@ -56,7 +56,7 @@ resource "hcloud_server" "control_plane" {
 
 resource "hcloud_load_balancer_network" "load_balancer" {
   count =  (var.enable_lb != "" ? 1 : 0) 
-  load_balancer_id = hcloud_load_balancer.load_balancer.id
+  load_balancer_id = hcloud_load_balancer.load_balancer[0].id
   subnet_id        = hcloud_network_subnet.kubeone.id
 }
 
@@ -75,7 +75,7 @@ resource "hcloud_load_balancer" "load_balancer" {
 resource "hcloud_load_balancer_target" "load_balancer_target" {
   count =  (var.enable_lb != "" ? 3 : 0) 
   type             = "server"
-  load_balancer_id = hcloud_load_balancer.load_balancer.id
+  load_balancer_id = hcloud_load_balancer.load_balancer[0].id
   server_id        = element(hcloud_server.control_plane.*.id, count.index)
   use_private_ip   = true
   depends_on = [
@@ -86,7 +86,7 @@ resource "hcloud_load_balancer_target" "load_balancer_target" {
 
 resource "hcloud_load_balancer_service" "load_balancer_service" {
   count =  (var.enable_lb != "" ? 1 : 0) 
-  load_balancer_id = hcloud_load_balancer.load_balancer.id
+  load_balancer_id = hcloud_load_balancer.load_balancer[0].id
   protocol         = "tcp"
   listen_port      = 6443
   destination_port = 6443

@@ -14,13 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-output "kubeone_api" {
-  description = "kube-apiserver LB endpoint"
-
-  value = {
-    endpoint = hcloud_load_balancer.load_balancer.ipv4
-  }
-}
 
 output "kubeone_hosts" {
   description = "Control plane endpoints to SSH to"
