@@ -47,6 +47,7 @@ resource "hcloud_server" "control_plane" {
   server_type = var.control_plane_type
   image       = var.image
   location    = var.datacenter
+  firewall_ids = [hcloud_firewall.firewall_ping.id]
 
   ssh_keys = [
     hcloud_ssh_key.kubeone.id,
@@ -94,4 +95,16 @@ resource "hcloud_load_balancer_service" "load_balancer_service" {
   protocol         = "tcp"
   listen_port      = 6443
   destination_port = 6443
+}
+
+resource "hcloud_firewall" "firewall_ping" {
+  name = "ping"
+  rule {
+   direction = "in"
+   protocol = "icmp"
+   source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+   ]
+  }
 }
