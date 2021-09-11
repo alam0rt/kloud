@@ -68,7 +68,7 @@ variable "worker_type" {
 }
 
 variable "workers_replicas" {
-  default = 0
+  default = 3
 }
 
 variable "control_plane_replicas" {
