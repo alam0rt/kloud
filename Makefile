@@ -22,5 +22,6 @@ $(cluster).json: $(cluster).out
 	cd terraform && \
 	terraform output -json > ../$(cluster).json
 
-create: $(cluster).json
-	kubeone apply --manifest cluster/$(cluster).yaml -t $(cluster).json	
+$(cluster).tar.gz: $(cluster).json
+	kubeone apply --manifest cluster/$(cluster).yaml -t $(cluster).json
+	sops -e -i $(cluster).tar.gz

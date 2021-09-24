@@ -2,11 +2,13 @@ apiVersion: kubeone.io/v1beta1
 kind: KubeOneCluster
 versions:
   kubernetes: '1.21.4'
+
 cloudProvider:
   hetzner: {}
   external: true
+
 addons:
-  enable: false
+  enable: true
   path: "./addons"
   addons:
   - name: unattended-upgrades
