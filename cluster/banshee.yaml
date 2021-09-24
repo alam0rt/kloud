@@ -8,3 +8,5 @@ cloudProvider:
 addons:
   enable: false
   path: "./addons"
+  addons:
+  - name: unattended-upgrades
