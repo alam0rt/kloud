@@ -14,6 +14,9 @@ plan: init
 
 apply: $(cluster).out
 
+
+kapply: $(cluster).tar.gz
+
 $(cluster).out: plan
 	cd terraform && \
 	terraform apply $(cluster).out
