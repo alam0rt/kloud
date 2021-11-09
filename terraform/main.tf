@@ -53,9 +53,12 @@ resource "hcloud_firewall" "cluster" {
     direction   = "in"
     protocol    = "tcp"
     port        = "any"
-    source_ips = [
-      var.ip_range,
-    ]
+    source_ips = concat([var.ip_range],
+      [
+        for i in range(var.control_plane_replicas):
+          join("/", [hcloud_server.control_plane[i].ipv4_address, "32"])
+      ]
+    )
   }
 
   rule {
@@ -74,7 +77,7 @@ resource "hcloud_firewall" "cluster" {
     protocol    = "tcp"
     port        = "22"
     source_ips = [
-      "0.0.0.0/0",
+      "119.17.136.0/24",
     ]
   }
 
@@ -153,6 +156,6 @@ resource "hcloud_load_balancer_service" "load_balancer_service" {
   count =  (var.enable_lb != "" ? 1 : 0) 
   load_balancer_id = hcloud_load_balancer.load_balancer[0].id
   protocol         = "tcp"
-  listen_port      = 6443
+  listen_port      = 8443
   destination_port = 6443
 }
