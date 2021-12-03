@@ -28,6 +28,17 @@ resource "hcloud_network" "net" {
   ip_range = var.ip_range
 }
 
+data "http" "ip" {
+  url = "https://ifconfig.co/json"
+  request_headers = {
+    Accept = "application/json"
+  }
+}
+
+locals {
+  ifconfig_co_json = jsondecode(data.http.ip.body)
+}
+
 resource "hcloud_firewall" "cluster" {
   name = "${var.cluster_name}-fw"
 
@@ -72,12 +83,12 @@ resource "hcloud_firewall" "cluster" {
   }
 
   rule {
-    description = "allow SSH from any"
+    description = "allow SSH from self"
     direction   = "in"
     protocol    = "tcp"
     port        = "22"
     source_ips = [
-      "119.17.136.0/24",
+      "${local.ifconfig_co_json.ip}/32",
     ]
   }
 
