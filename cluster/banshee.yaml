@@ -1,14 +1,19 @@
-apiVersion: kubeone.io/v1beta1
+apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 versions:
-  kubernetes: '1.21.7'
-
+  kubernetes: 1.21.7
 cloudProvider:
   hetzner: {}
   external: true
-
+clusterNetwork:
+  kubeProxy:
+    skipInstallation: true
+  cni:
+    cilium:
+      enableHubble: true
+      kubeProxyReplacement: strict
 addons:
   enable: true
-  path: "./addons"
+  path: ./addons
   addons:
   - name: unattended-upgrades
