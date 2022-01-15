@@ -35,9 +35,16 @@ data "http" "ip" {
   }
 }
 
+data "hcloud_servers" "nodes" {
+  with_selector = "role=node"
+}
+
+
 locals {
   ifconfig_co_json = jsondecode(data.http.ip.body)
-}
+  node_public_ipv4 = [for node in data.hcloud_servers.nodes.servers : join("/", [node.ipv4_address, "32"])]
+  controlplane_public_ipv4 = [for i in range(var.control_plane_replicas) : join("/", [hcloud_server.control_plane[i].ipv4_address, "32"])]
+} 
 
 resource "hcloud_firewall" "cluster" {
   name = "${var.cluster_name}-fw"
@@ -64,11 +71,11 @@ resource "hcloud_firewall" "cluster" {
     direction   = "in"
     protocol    = "tcp"
     port        = "any"
-    source_ips = concat([var.ip_range],
-      [
-        for i in range(var.control_plane_replicas):
-          join("/", [hcloud_server.control_plane[i].ipv4_address, "32"])
-      ]
+    source_ips = concat(
+      [],
+      [var.ip_range],
+      local.controlplane_public_ipv4,
+      local.node_public_ipv4,
     )
   }
 
@@ -77,9 +84,12 @@ resource "hcloud_firewall" "cluster" {
     direction   = "in"
     protocol    = "udp"
     port        = "any"
-    source_ips = [
-      var.ip_range,
-    ]
+    source_ips  = concat(
+      [],
+      [var.ip_range],
+      local.controlplane_public_ipv4,
+      local.node_public_ipv4,
+    )
   }
 
   rule {
