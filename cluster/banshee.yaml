@@ -1,7 +1,7 @@
 apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 versions:
-  kubernetes: 1.21.7
+  kubernetes: 1.22.5
 cloudProvider:
   hetzner: {}
   external: true
@@ -12,6 +12,8 @@ clusterNetwork:
     cilium:
       enableHubble: true
       kubeProxyReplacement: strict
+containerRuntime:
+  containerd: {}
 addons:
   enable: true
   path: ./addons
