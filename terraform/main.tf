@@ -28,6 +28,7 @@ resource "hcloud_network" "net" {
   ip_range = var.ip_range
 }
 
+
 data "http" "ip" {
   url = "https://ifconfig.co/json"
   request_headers = {
@@ -77,6 +78,22 @@ resource "hcloud_firewall" "cluster" {
       local.controlplane_public_ipv4,
       local.node_public_ipv4,
     )
+  }
+
+  rule {
+    description = "allow TCP Mumble traffic"
+    direction   = "in"
+    protocol    = "tcp"
+    port        = "64738"
+    source_ips = ["0.0.0.0/0"]
+  }
+
+  rule {
+    description = "allow UDP Mumble traffic"
+    direction   = "in"
+    protocol    = "udp"
+    port        = "64738"
+    source_ips = ["0.0.0.0/0"]
   }
 
   rule {
