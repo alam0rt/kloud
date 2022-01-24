@@ -29,6 +29,3 @@ $(cluster).json: output
 
 $(cluster).tar.gz: $(cluster).json
 	./kubeone apply --manifest cluster/$(cluster).yaml -t cluster/$(cluster).json --backup ./$(cluster).tar.gz
-	cd cluster && \
-	sops -e -i $(cluster).tar.gz
-	sops -e -i $(cluster).json
