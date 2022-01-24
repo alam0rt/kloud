@@ -1,6 +1,6 @@
 cluster=banshee
 
-.PHONY: all init plan apply
+.PHONY: all init plan apply kapply output
 
 all: create
 
@@ -14,6 +14,10 @@ plan: init
 
 apply: $(cluster).out
 
+output: apply
+	cd terraform && \
+	terraform output -json > ../cluster/$(cluster).json
+
 
 kapply: $(cluster).tar.gz
 
@@ -21,10 +25,10 @@ $(cluster).out: plan
 	cd terraform && \
 	terraform apply $(cluster).out
 
-$(cluster).json: $(cluster).out
-	cd terraform && \
-	terraform output -json > ../$(cluster).json
+$(cluster).json: output
 
 $(cluster).tar.gz: $(cluster).json
-	./kubeone apply --manifest cluster/$(cluster).yaml -t $(cluster).json --backup ./$(cluster).tar.gz
-	sops -e -i ./$(cluster).tar.gz
+	./kubeone apply --manifest cluster/$(cluster).yaml -t cluster/$(cluster).json --backup ./$(cluster).tar.gz
+	cd cluster && \
+	sops -e -i $(cluster).tar.gz
+	sops -e -i $(cluster).json
