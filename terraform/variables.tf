@@ -23,6 +23,12 @@ variable "cluster_name" {
   description = "prefix for cloud resources"
 }
 
+variable "apiserver_alternative_names" {
+  description = "subject alternative names for the API Server signing cert."
+  default     = []
+  type        = list(string)
+}
+
 variable "worker_os" {
   description = "OS to run on worker machines"
 

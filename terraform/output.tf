@@ -14,6 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+output "kubeone_api" {
+  description = "kube-apiserver LB endpoint"
+
+  value = {
+    endpoint = hcloud_load_balancer.load_balancer[0].network_ip
+    apiserver_alternative_names = var.apiserver_alternative_names
+  }
+}
+
+output "ssh_commands" {
+  value = formatlist("ssh ${var.ssh_username}@%s", hcloud_server.control_plane.*.ipv4_address)
+}
 
 output "kubeone_hosts" {
   description = "Control plane endpoints to SSH to"
