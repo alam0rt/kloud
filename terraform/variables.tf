@@ -25,7 +25,7 @@ variable "cluster_name" {
 
 variable "apiserver_alternative_names" {
   description = "subject alternative names for the API Server signing cert."
-  default     = []
+  default     = ["api.samlockart.com"]
   type        = list(string)
 }
 
