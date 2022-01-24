@@ -26,5 +26,5 @@ $(cluster).json: $(cluster).out
 	terraform output -json > ../$(cluster).json
 
 $(cluster).tar.gz: $(cluster).json
-	./kubeone apply --manifest cluster/$(cluster).yaml -t $(cluster).json
-	sops -e -i cluster/$(cluster).tar.gz
+	./kubeone apply --manifest cluster/$(cluster).yaml -t $(cluster).json --backup ./$(cluster).tar.gz
+	sops -e -i ./$(cluster).tar.gz
