@@ -18,7 +18,8 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = hcloud_load_balancer.load_balancer[0].network_ip
+    # endpoint = hcloud_load_balancer.load_balancer[0].network_ip
+    endpoint = hcloud_server.control_plane[0].ipv4_address
     apiserver_alternative_names = var.apiserver_alternative_names
   }
 }

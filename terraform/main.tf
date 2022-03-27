@@ -110,10 +110,10 @@ resource "hcloud_firewall" "cluster" {
   }
 
   rule {
-    description = "allow SSH from self"
+    description = "allow access from self"
     direction   = "in"
     protocol    = "tcp"
-    port        = "22"
+    port        = "any"
     source_ips = [
       "${local.ifconfig_co_json.ip}/32",
     ]
@@ -164,6 +164,7 @@ resource "hcloud_load_balancer_network" "load_balancer" {
   count =  (var.enable_lb != "" ? 1 : 0) 
   load_balancer_id = hcloud_load_balancer.load_balancer[0].id
   subnet_id        = hcloud_network_subnet.kubeone.id
+  enable_public_interface = false
 }
 
 resource "hcloud_load_balancer" "load_balancer" {
@@ -194,6 +195,6 @@ resource "hcloud_load_balancer_service" "load_balancer_service" {
   count =  (var.enable_lb != "" ? 1 : 0) 
   load_balancer_id = hcloud_load_balancer.load_balancer[0].id
   protocol         = "tcp"
-  listen_port      = 8443
+  listen_port      = 6443
   destination_port = 6443
 }
